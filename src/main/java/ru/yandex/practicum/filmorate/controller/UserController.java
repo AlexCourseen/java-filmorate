@@ -44,7 +44,14 @@ public class UserController {
         if (users.containsKey(newUser.getId())) {
             checkUser(newUser);
             User oldUser = users.get(newUser.getId());
-            oldUser = newUser;
+            if (!newUser.getName().isBlank() || newUser.getName() != null) {
+                oldUser.setName(newUser.getName());
+            }
+            oldUser.setLogin(newUser.getLogin());
+            oldUser.setEmail(newUser.getEmail());
+            if (newUser.getBirthday() != null) {
+                oldUser.setBirthday(newUser.getBirthday());
+            }
             log.info("Обновлен пользователь {}", oldUser);
             return oldUser;
         }
@@ -64,6 +71,10 @@ public class UserController {
         if (user.getLogin().isBlank() || user.getLogin() == null) {
             log.warn("Ошибка валидации: логин не может быть пустым");
             throw new ValidationException("Логин не может быть пустым");
+        }
+        if (user.getEmail().isBlank() || user.getEmail() == null) {
+            log.warn("Ошибка валидации: email не может быть пустым");
+            throw new ValidationException("Email не может быть пустым");
         }
         if (!user.getEmail().contains("@")) {
             log.warn("Ошибка валидации: email должен содержать '@'");

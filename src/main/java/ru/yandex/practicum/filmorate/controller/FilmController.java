@@ -42,7 +42,16 @@ public class FilmController {
         if (films.containsKey(newFilm.getId())) {
             checkFilm(newFilm);
             Film oldFilm = films.get(newFilm.getId());
-            oldFilm = newFilm;
+            oldFilm.setName(newFilm.getName());
+            if (!newFilm.getDescription().isBlank() || newFilm.getDescription() != null) {
+                oldFilm.setDescription(newFilm.getDescription());
+            }
+            if (newFilm.getReleaseDate() != null) {
+                oldFilm.setReleaseDate(newFilm.getReleaseDate());
+            }
+            if (String.valueOf(newFilm.getDuration()) != null || !String.valueOf(newFilm.getDuration()).isBlank()) {
+                oldFilm.setDuration(newFilm.getDuration());
+            }
             log.info("Обновлен фильм {}", oldFilm);
             return oldFilm;
         }
