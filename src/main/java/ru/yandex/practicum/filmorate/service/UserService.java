@@ -6,9 +6,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -33,45 +31,39 @@ public class UserService {
     }
 
     public void addFriend(long userId, long idFriend) {
-        Set<Long> userFriends = checkFriends(userId);
-        Set<Long> friendFriends = checkFriends(idFriend);
-        userFriends.add(idFriend);
-        friendFriends.add(userId);
+        User user = getUser(userId);
+        User userFriend = getUser(idFriend);
+        user.getFriends().add(idFriend);
+        userFriend.getFriends().add(userId);
     }
 
     public List<User> getFriends(long idUser) {
-        return checkFriends(idUser)
+        return getUser(idUser).getFriends()
                 .stream()
                 .map(storage::getUser)
                 .toList();
     }
 
     public List<User> delFriend(long userId, long idFriend) {
-        Set<Long> userFriends = checkFriends(userId);
-        Set<Long> friendFriends = checkFriends(idFriend);
+        User user = getUser(userId);
+        User userFriend = getUser(idFriend);
+        userFriend.getFriends().remove(userId);
+        Set<Long> userFriends = user.getFriends();
         userFriends.remove(idFriend);
-        friendFriends.remove(userId);
-        return userFriends.stream()
+        return userFriends
+                .stream()
                 .map(storage::getUser)
                 .toList();
     }
 
     public List<User> commonFriends(long userId, long otherId) {
-        Set<Long> userFriends = checkFriends(userId);
-        Set<Long> otherUserFriends = checkFriends(otherId);
+        User user = getUser(userId);
+        User otherUser = getUser(otherId);
+        Set<Long> userFriends = user.getFriends();
+        Set<Long> otherUserFriends = otherUser.getFriends();
         return userFriends.stream()
                 .filter(otherUserFriends::contains)
                 .map(storage::getUser)
                 .toList();
-    }
-
-    private Set<Long> checkFriends(long id) {
-        User user = getUser(id);
-        return Optional.ofNullable(user.getFriends())
-                .orElseGet(() -> {
-                    Set<Long> friends = new HashSet<>();
-                    user.setFriends(friends);
-                    return friends;
-                });
     }
 }
