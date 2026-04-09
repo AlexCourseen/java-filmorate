@@ -2,10 +2,10 @@ package ru.yandex.practicum.filmorate;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import ru.yandex.practicum.filmorate.controller.FilmController;
-import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 
 import java.time.LocalDate;
 
@@ -22,7 +22,7 @@ class FilmorateApplicationTests {
 
     @Test
     void addCorrectFilm_returnFilmIdWithId() {
-        FilmController controller = new FilmController();
+        InMemoryFilmStorage filmStorage = new InMemoryFilmStorage();
         Film film = Film.builder()
                 .name("IT")
                 .description("about film")
@@ -30,7 +30,7 @@ class FilmorateApplicationTests {
                 .releaseDate(LocalDate.of(2000, 1, 1))
                 .build();
 
-        Film newFilm = controller.create(film);
+        Film newFilm = filmStorage.createFilm(film);
 
         assertNotNull(newFilm.getId());
         assertEquals(film.getName(), newFilm.getName());
@@ -41,7 +41,7 @@ class FilmorateApplicationTests {
 
     @Test
     void addFilmWithDescriptionWith201Length_returnError() {
-        FilmController controller = new FilmController();
+        InMemoryFilmStorage filmStorage = new InMemoryFilmStorage();
         Film film = Film.builder()
                 .name("IT")
                 .description("Описание 201 символОписание 201 символОписание 201 символОписание 201 символОписание " +
@@ -51,7 +51,7 @@ class FilmorateApplicationTests {
                 .releaseDate(LocalDate.of(2000, 1, 1))
                 .build();
         try {
-            Film newFilm = controller.create(film);
+            Film newFilm = filmStorage.createFilm(film);
         } catch (Exception e) {
             assertEquals("Описание не может быть более 200 символов", e.getMessage());
         }
@@ -59,10 +59,10 @@ class FilmorateApplicationTests {
 
     @Test
     void addFilmWithoutParams_returnError() {
-        FilmController controller = new FilmController();
+        InMemoryFilmStorage filmStorage = new InMemoryFilmStorage();
         Film film = null;
         try {
-            Film newFilm = controller.create(film);
+            Film newFilm = filmStorage.createFilm(film);
         } catch (Exception e) {
             assertTrue(e.getMessage().contains("\"film\" is null"));
         }
@@ -70,7 +70,7 @@ class FilmorateApplicationTests {
 
     @Test
     void addFilmWithEmptyName_returnError() {
-        FilmController controller = new FilmController();
+        InMemoryFilmStorage filmStorage = new InMemoryFilmStorage();
         Film film = Film.builder()
                 .name("")
                 .description("Описание")
@@ -78,7 +78,7 @@ class FilmorateApplicationTests {
                 .releaseDate(LocalDate.of(2000, 1, 1))
                 .build();
         try {
-            Film newFilm = controller.create(film);
+            Film newFilm = filmStorage.createFilm(film);
         } catch (Exception e) {
             assertEquals("Название не может быть пустым", e.getMessage());
         }
@@ -86,7 +86,7 @@ class FilmorateApplicationTests {
 
     @Test
     void addFilmWithReleaseDateAfter_returnError() {
-        FilmController controller = new FilmController();
+        InMemoryFilmStorage filmStorage = new InMemoryFilmStorage();
         final LocalDate startFilmReleaseDate = LocalDate.of(1895, 12, 28);
         Film film = Film.builder()
                 .name("IT")
@@ -95,7 +95,7 @@ class FilmorateApplicationTests {
                 .releaseDate(LocalDate.of(1895, 12, 27))
                 .build();
         try {
-            Film newFilm = controller.create(film);
+            Film newFilm = filmStorage.createFilm(film);
         } catch (Exception e) {
             assertEquals("Дата релиза не может быть раньше " + startFilmReleaseDate, e.getMessage());
         }
@@ -103,7 +103,7 @@ class FilmorateApplicationTests {
 
     @Test
     void addFilmWithNegativeDuration_returnError() {
-        FilmController controller = new FilmController();
+        InMemoryFilmStorage filmStorage = new InMemoryFilmStorage();
         Film film = Film.builder()
                 .name("IT")
                 .description("Описание")
@@ -111,7 +111,7 @@ class FilmorateApplicationTests {
                 .releaseDate(LocalDate.of(1895, 12, 29))
                 .build();
         try {
-            Film newFilm = controller.create(film);
+            Film newFilm = filmStorage.createFilm(film);
         } catch (Exception e) {
             assertEquals("Продолжительность не может меньше 0", e.getMessage());
         }
@@ -119,9 +119,8 @@ class FilmorateApplicationTests {
 
     @Test
     void updateFilm_returnFilmWithUpdates() {
-        FilmController controller = new FilmController();
-
-        Film film = controller.create(Film.builder()
+        InMemoryFilmStorage filmStorage = new InMemoryFilmStorage();
+        Film film = filmStorage.createFilm(Film.builder()
                 .name("IT")
                 .description("about film")
                 .duration(45)
@@ -136,7 +135,7 @@ class FilmorateApplicationTests {
                 .releaseDate(LocalDate.of(2001, 2, 2))
                 .build();
 
-        Film newFilm = controller.update(updateFilm);
+        Film newFilm = filmStorage.updateFilm(updateFilm);
 
         assertEquals(updateFilm.getName(), newFilm.getName());
         assertEquals(updateFilm.getDescription(), newFilm.getDescription());
@@ -146,7 +145,7 @@ class FilmorateApplicationTests {
 
     @Test
     void addCorrectUser_returnUserWithId() {
-        UserController controller = new UserController();
+        InMemoryUserStorage userStorage = new InMemoryUserStorage();
         User user = User.builder()
                 .name("John")
                 .email("test@tet.ru")
@@ -154,7 +153,7 @@ class FilmorateApplicationTests {
                 .birthday(LocalDate.of(2000, 1, 1))
                 .build();
 
-        User newUser = controller.create(user);
+        User newUser = userStorage.createUser(user);
 
         assertNotNull(newUser.getId());
         assertEquals(user.getName(), newUser.getName());
@@ -165,7 +164,7 @@ class FilmorateApplicationTests {
 
     @Test
     void addUserWithEmptyName_returnUserWithNameEqualLogin() {
-        UserController controller = new UserController();
+        InMemoryUserStorage userStorage = new InMemoryUserStorage();
         User user = User.builder()
                 .name("")
                 .email("test@tet.ru")
@@ -173,7 +172,7 @@ class FilmorateApplicationTests {
                 .birthday(LocalDate.of(2000, 1, 1))
                 .build();
 
-        User newUser = controller.create(user);
+        User newUser = userStorage.createUser(user);
 
         assertNotNull(newUser.getId());
         assertEquals(newUser.getName(), newUser.getLogin());
@@ -184,9 +183,9 @@ class FilmorateApplicationTests {
 
     @Test
     void updateUser_returnUserWithUpdates() {
-        UserController controller = new UserController();
+        InMemoryUserStorage userStorage = new InMemoryUserStorage();
 
-        User user = controller.create(User.builder()
+        User user = userStorage.createUser(User.builder()
                 .name("John")
                 .email("test@tet.ru")
                 .login("login")
@@ -201,7 +200,7 @@ class FilmorateApplicationTests {
                 .birthday(LocalDate.of(2002, 3, 4))
                 .build();
 
-        User newUser = controller.update(updateUser);
+        User newUser = userStorage.updateUser(updateUser);
 
         assertEquals(updateUser.getName(), newUser.getName());
         assertEquals(updateUser.getEmail(), newUser.getEmail());
@@ -211,7 +210,7 @@ class FilmorateApplicationTests {
 
     @Test
     void addUserWithIncorrectEmail_returnError() {
-        UserController controller = new UserController();
+        InMemoryUserStorage userStorage = new InMemoryUserStorage();
         User user = User.builder()
                 .name("John")
                 .email("test")
@@ -219,7 +218,7 @@ class FilmorateApplicationTests {
                 .birthday(LocalDate.of(1999, 12, 29))
                 .build();
         try {
-            User newUser = controller.create(user);
+            User newUser = userStorage.createUser(user);
         } catch (Exception e) {
             assertEquals("Email должен содержать '@'", e.getMessage());
         }
@@ -227,7 +226,7 @@ class FilmorateApplicationTests {
 
     @Test
     void addUserWithEmptyLogin_returnError() {
-        UserController controller = new UserController();
+        InMemoryUserStorage userStorage = new InMemoryUserStorage();
         User user = User.builder()
                 .name("John")
                 .email("test@mail.ru")
@@ -235,7 +234,7 @@ class FilmorateApplicationTests {
                 .birthday(LocalDate.of(1999, 12, 29))
                 .build();
         try {
-            User newUser = controller.create(user);
+            User newUser = userStorage.createUser(user);
         } catch (Exception e) {
             assertEquals("Логин не может быть пустым", e.getMessage());
         }
@@ -243,7 +242,7 @@ class FilmorateApplicationTests {
 
     @Test
     void addUserWithBirthdayInFuture_returnError() {
-        UserController controller = new UserController();
+        InMemoryUserStorage userStorage = new InMemoryUserStorage();
         User user = User.builder()
                 .name("John")
                 .email("test@mail.ru")
@@ -251,11 +250,9 @@ class FilmorateApplicationTests {
                 .birthday(LocalDate.now().plusDays(1))
                 .build();
         try {
-            User newUser = controller.create(user);
+            User newUser = userStorage.createUser(user);
         } catch (Exception e) {
             assertEquals("Дата рождения не может быть в будущем", e.getMessage());
         }
     }
-
-
 }
