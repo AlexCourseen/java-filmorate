@@ -1,2 +1,4 @@
 # java-filmorate
-Template repository for Filmorate project.
+
+![DB Schema]
+(images/QuickDBD-export.png)
