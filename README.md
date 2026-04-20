@@ -1,4 +1,3 @@
 # java-filmorate
 
-![DB Schema]
-(images/QuickDBD-export.png)
+![DB Schema](images/QuickDBD-export.png)
