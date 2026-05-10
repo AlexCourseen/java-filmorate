@@ -7,15 +7,15 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import java.time.LocalDate;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-@Component
+@Component("inMemoryFilmStorage")
 public class InMemoryFilmStorage implements FilmStorage {
     private final Map<Long, Film> films = new HashMap<>();
-    private final LocalDate startFilmReleaseDate = LocalDate.of(1895, 12, 28);
 
     @Override
     public Collection<Film> getAllFilms() {
@@ -58,6 +58,15 @@ public class InMemoryFilmStorage implements FilmStorage {
         throw new NotFoundException("Фильм с id = " + newFilm.getId() + " не найден");
     }
 
+    @Override
+    public Collection<Film> getPopularFilms(int count) {
+        return getAllFilms()
+                .stream()
+                .sorted(Comparator.comparingInt((Film film) -> film.getLikes().size()).reversed())
+                .limit(count)
+                .collect(Collectors.toList());
+    }
+
     private long getNextId() {
         long maxId = films.keySet()
                 .stream()
@@ -77,8 +86,8 @@ public class InMemoryFilmStorage implements FilmStorage {
         if (film.getDuration() < 0) {
             throw new ValidationException("Продолжительность не может меньше 0");
         }
-        if (film.getReleaseDate().isBefore(startFilmReleaseDate)) {
-            throw new ValidationException("Дата релиза не может быть раньше " + startFilmReleaseDate);
+        if (film.getReleaseDate().isBefore(START_FILM_RELEASE_DATE)) {
+            throw new ValidationException("Дата релиза не может быть раньше " + START_FILM_RELEASE_DATE);
         }
     }
 }
