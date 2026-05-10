@@ -36,12 +36,12 @@ public class FilmDbStorage extends BaseDbStorage<Film> implements FilmStorage {
     private static final String UPDATE_FILM = "UPDATE film SET name=?, description=?, releaseDate=?," +
             " duration=?, rating_id=? WHERE film_id = ?";
     private static final String GENRES_TO_FILM = "INSERT INTO film_genre(genre_id, film_id) VALUES (?, ?)";
-    private static final String GET_POPULAR_FILMS = "SELECT f.*, r.NAME as mpa_name\n" +
-            "FROM film f\n" +
-            "LEFT JOIN likes l ON f.film_id = l.film_id\n" +
-            "LEFT JOIN rating r ON f.rating_id = r.rating_id\n" +
-            "GROUP BY f.film_id, f.name, f.description, f.releaseDate, f.duration, f.rating_id\n" +
-            "ORDER BY COUNT(l.user_id) DESC\n" +
+    private static final String GET_POPULAR_FILMS = "SELECT f.*, r.NAME as mpa_name " +
+            "FROM film f " +
+            "LEFT JOIN likes l ON f.film_id = l.film_id " +
+            "LEFT JOIN rating r ON f.rating_id = r.rating_id " +
+            "GROUP BY f.film_id, f.name, f.description, f.releaseDate, f.duration, f.rating_id " +
+            "ORDER BY COUNT(l.user_id) DESC " +
             "LIMIT ?";
 
     FilmDbStorage(JdbcTemplate jdbc, FilmRowMapper mapper, GenreStorage genreStorage, LikeStorage likeStorage) {
