@@ -27,7 +27,7 @@ public class RatingDbStorage extends BaseDbStorage<Rating> implements RatingStor
 
     @Override
     public Rating getRating(long id) {
-        return findOne(FIND_RATING_BY_ID, id).
-                orElseThrow(() -> new NotFoundException("Рейтинг с id = " + id + " не найден"));
+        return findOne(FIND_RATING_BY_ID, id)
+                .orElseThrow(() -> new NotFoundException("Рейтинг с id = " + id + " не найден"));
     }
 }
