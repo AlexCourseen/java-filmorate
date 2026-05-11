@@ -11,10 +11,10 @@ import java.util.Collection;
 
 @Repository("likeDbStorage")
 public class LikeDbStorage extends BaseDbStorage<Like> implements LikeStorage {
-    private final static String ADD_LIKE = "MERGE INTO likes (film_id, user_id) " +
+    private static final String ADD_LIKE = "MERGE INTO likes (film_id, user_id) " +
             "KEY(film_id, user_id) " +
             "VALUES (?, ?)";
-    private final static String DEL_LIKE = "DELETE FROM likes WHERE film_id = ? AND user_id = ?";
+    private static final String DEL_LIKE = "DELETE FROM likes WHERE film_id = ? AND user_id = ?";
     private static final String GET_LIKES = "SELECT user_id FROM likes WHERE film_id = ?";
 
     @Autowired

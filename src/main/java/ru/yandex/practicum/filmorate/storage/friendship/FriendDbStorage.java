@@ -17,10 +17,10 @@ public class FriendDbStorage extends BaseDbStorage<Friend> implements FriendStor
     @Qualifier("userDbStorage")
     private final UserStorage userStorage;
 
-    private final static String ADD_FRIEND = "MERGE INTO friends (user_id, friend_id) " +
+    private static final String ADD_FRIEND = "MERGE INTO friends (user_id, friend_id) " +
             "KEY(user_id, friend_id) " +
             "VALUES (?, ?)";
-    private final static String DEL_FRIEND = "DELETE FROM friends WHERE user_id = ? AND friend_id = ?";
+    private static final String DEL_FRIEND = "DELETE FROM friends WHERE user_id = ? AND friend_id = ?";
     private static final String GET_FRIENDS = "SELECT friend_id FROM friends WHERE user_id = ?";
 
     @Autowired
