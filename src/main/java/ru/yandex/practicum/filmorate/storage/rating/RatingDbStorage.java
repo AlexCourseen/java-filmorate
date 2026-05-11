@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.rating;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
@@ -14,6 +15,7 @@ public class RatingDbStorage extends BaseDbStorage<Rating> implements RatingStor
     private static final String FIND_ALL_RATINGS = "SELECT * FROM rating ORDER BY rating_id ASC";
     private static final String FIND_RATING_BY_ID = "SELECT * FROM rating WHERE rating_id = ? ORDER BY rating_id ASC";
 
+    @Autowired
     RatingDbStorage(JdbcTemplate jdbc, RatingRowMapper mapper) {
         super(jdbc, mapper);
     }
@@ -25,7 +27,7 @@ public class RatingDbStorage extends BaseDbStorage<Rating> implements RatingStor
 
     @Override
     public Rating getRating(long id) {
-        return findOne(FIND_RATING_BY_ID, id)
-                .orElseThrow(() -> new NotFoundException("Рейтинг с id = " + id + " не найден"));
+        return findOne(FIND_RATING_BY_ID, id).
+                orElseThrow(() -> new NotFoundException("Рейтинг с id = " + id + " не найден"));
     }
 }

@@ -1,0 +1,22 @@
+package ru.yandex.practicum.filmorate.service;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.model.Rating;
+import ru.yandex.practicum.filmorate.storage.rating.RatingStorage;
+
+import java.util.Collection;
+
+@Service
+@RequiredArgsConstructor
+public class RatingService {
+    private final RatingStorage storage;
+
+    public Collection<Rating> getAllRatings() {
+        return storage.getAllRatings();
+    }
+
+    public Rating getRating(long id) {
+        return storage.getRating(id);
+    }
+}

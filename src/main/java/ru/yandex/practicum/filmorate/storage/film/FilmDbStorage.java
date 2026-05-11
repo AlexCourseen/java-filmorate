@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.film;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
@@ -14,7 +15,6 @@ import ru.yandex.practicum.filmorate.storage.mappers.FilmRowMapper;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -43,7 +43,10 @@ public class FilmDbStorage extends BaseDbStorage<Film> implements FilmStorage {
             "GROUP BY f.film_id, f.name, f.description, f.releaseDate, f.duration, f.rating_id " +
             "ORDER BY COUNT(l.user_id) DESC " +
             "LIMIT ?";
+    private final static String DEL_FILM = "DELETE FROM users WHERE user_id = ?";
 
+
+    @Autowired
     FilmDbStorage(JdbcTemplate jdbc, FilmRowMapper mapper, GenreStorage genreStorage, LikeStorage likeStorage) {
         super(jdbc, mapper);
         this.genreStorage = genreStorage;
@@ -59,12 +62,10 @@ public class FilmDbStorage extends BaseDbStorage<Film> implements FilmStorage {
 
     @Override
     public Film getFilm(long id) {
-        Optional<Film> film = findOne(FIND_FILM_BY_ID, id);
-        if (film.isEmpty()) {
-            throw new NotFoundException("Фильм с id = " + id + " не найден");
-        }
-        setLikesAndGenres(film.get());
-        return film.get();
+        Film film = findOne(FIND_FILM_BY_ID, id)
+                .orElseThrow(() -> new NotFoundException("Фильм с id = " + id + " не найден"));
+        setLikesAndGenres(film);
+        return film;
     }
 
     @Override
@@ -105,6 +106,10 @@ public class FilmDbStorage extends BaseDbStorage<Film> implements FilmStorage {
         Collection<Film> films = findMany(GET_POPULAR_FILMS, count);
         films.forEach(this::setLikesAndGenres);
         return films;
+    }
+
+    public void delFim(long id) {
+        update(DEL_FILM,id);
     }
 
     private void checkFilm(Film film) {

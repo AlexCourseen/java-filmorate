@@ -6,10 +6,8 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.like.LikeStorage;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.Collection;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -17,8 +15,6 @@ public class FilmService {
     private final LikeStorage likeStorage;
     @Qualifier("filmDbStorage")
     private final FilmStorage filmStorage;
-    @Qualifier("userDbStorage")
-    private final UserStorage userStorage;
 
     public Collection<Film> getAllFilms() {
         return filmStorage.getAllFilms();

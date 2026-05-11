@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS likes (
 );
 
 CREATE TABLE IF NOT EXISTS friends (
-    user1_id integer REFERENCES users (user_id) ON DELETE CASCADE,
-    user2_id integer REFERENCES users (user_id) ON DELETE CASCADE
+    user_id integer REFERENCES users (user_id) ON DELETE CASCADE,
+    friend_id integer,
+    PRIMARY KEY (user_id, friend_id)
 );

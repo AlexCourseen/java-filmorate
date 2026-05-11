@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.genre;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
@@ -20,6 +21,7 @@ public class GenreDbStorage extends BaseDbStorage<Genre> implements GenreStorage
                     "WHERE fg.film_id = ?" +
                     " ORDER BY g.genre_id ASC";
 
+    @Autowired
     GenreDbStorage(JdbcTemplate jdbc, GenreRowMapper mapper) {
         super(jdbc, mapper);
     }
