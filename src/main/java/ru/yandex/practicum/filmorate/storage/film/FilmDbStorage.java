@@ -43,8 +43,7 @@ public class FilmDbStorage extends BaseDbStorage<Film> implements FilmStorage {
             "GROUP BY f.film_id, f.name, f.description, f.releaseDate, f.duration, f.rating_id " +
             "ORDER BY COUNT(l.user_id) DESC " +
             "LIMIT ?";
-    private final static String DEL_FILM = "DELETE FROM users WHERE user_id = ?";
-
+    private static final String DEL_FILM = "DELETE FROM users WHERE user_id = ?";
 
     @Autowired
     FilmDbStorage(JdbcTemplate jdbc, FilmRowMapper mapper, GenreStorage genreStorage, LikeStorage likeStorage) {

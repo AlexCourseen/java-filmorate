@@ -19,7 +19,7 @@ public class UserDbStorage extends BaseDbStorage<User> implements UserStorage {
     private static final String CREATE_USER = "INSERT INTO users(name, email, login, birthday) VALUES (?, ?, ?, ?)";
     private static final String UPDATE_USER = "UPDATE users SET name = ?, email = ?, login = ?, birthday = ?" +
             " WHERE user_id = ?";
-    private final static String DEL_USER = "DELETE FROM users WHERE user_id = ?";
+    private static final String DEL_USER = "DELETE FROM users WHERE user_id = ?";
 
 
     @Autowired
