@@ -9,9 +9,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Data
-//@Builder
-//@NoArgsConstructor
-//@AllArgsConstructor
 public class User {
     private long id;
     @Email
@@ -20,6 +17,5 @@ public class User {
     private String login;
     private String name;
     private LocalDate birthday;
-//    @Builder.Default
     private Set<Friend> friends = new HashSet<>();
 }

@@ -24,7 +24,7 @@ public class FriendDbStorage extends BaseDbStorage<Friend> implements FriendStor
     private static final String GET_FRIENDS = "SELECT friend_id FROM friends WHERE user_id = ?";
 
     @Autowired
-    FriendDbStorage(JdbcTemplate jdbc, FriendRowMapper mapper, @Qualifier("userDbStorage")UserStorage userStorage) {
+    public FriendDbStorage(JdbcTemplate jdbc, FriendRowMapper mapper, @Qualifier("userDbStorage")UserStorage userStorage) {
         super(jdbc, mapper);
         this.userStorage = userStorage;
     }

@@ -18,7 +18,7 @@ public class LikeDbStorage extends BaseDbStorage<Like> implements LikeStorage {
     private static final String GET_LIKES = "SELECT user_id FROM likes WHERE film_id = ?";
 
     @Autowired
-    LikeDbStorage(JdbcTemplate jdbc, LikeRowMapper mapper) {
+    public LikeDbStorage(JdbcTemplate jdbc, LikeRowMapper mapper) {
         super(jdbc, mapper);
     }
 

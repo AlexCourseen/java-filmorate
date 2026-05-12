@@ -46,7 +46,7 @@ public class FilmDbStorage extends BaseDbStorage<Film> implements FilmStorage {
     private static final String DEL_FILM = "DELETE FROM users WHERE user_id = ?";
 
     @Autowired
-    FilmDbStorage(JdbcTemplate jdbc, FilmRowMapper mapper, GenreStorage genreStorage, LikeStorage likeStorage) {
+    public FilmDbStorage(JdbcTemplate jdbc, FilmRowMapper mapper, GenreStorage genreStorage, LikeStorage likeStorage) {
         super(jdbc, mapper);
         this.genreStorage = genreStorage;
         this.likeStorage = likeStorage;

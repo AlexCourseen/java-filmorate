@@ -23,7 +23,7 @@ public class UserDbStorage extends BaseDbStorage<User> implements UserStorage {
 
 
     @Autowired
-    UserDbStorage(JdbcTemplate jdbc, UserRowMapper mapper) {
+    public UserDbStorage(JdbcTemplate jdbc, UserRowMapper mapper) {
         super(jdbc, mapper);
     }
 

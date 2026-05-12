@@ -22,7 +22,7 @@ public class GenreDbStorage extends BaseDbStorage<Genre> implements GenreStorage
                     " ORDER BY g.genre_id ASC";
 
     @Autowired
-    GenreDbStorage(JdbcTemplate jdbc, GenreRowMapper mapper) {
+    public GenreDbStorage(JdbcTemplate jdbc, GenreRowMapper mapper) {
         super(jdbc, mapper);
     }
 

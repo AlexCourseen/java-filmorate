@@ -16,7 +16,7 @@ public class RatingDbStorage extends BaseDbStorage<Rating> implements RatingStor
     private static final String FIND_RATING_BY_ID = "SELECT * FROM rating WHERE rating_id = ? ORDER BY rating_id ASC";
 
     @Autowired
-    RatingDbStorage(JdbcTemplate jdbc, RatingRowMapper mapper) {
+    public RatingDbStorage(JdbcTemplate jdbc, RatingRowMapper mapper) {
         super(jdbc, mapper);
     }
 
