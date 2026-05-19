@@ -16,7 +16,6 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import java.util.Collection;
-import java.util.List;
 
 @RestController
 @Slf4j
@@ -30,35 +29,39 @@ public class FilmController {
         return service.getAllFilms();
     }
 
+    @GetMapping("/{id}")
+    public Film get(@PathVariable long id) {
+        return service.getFilm(id);
+
+    }
+
     @PostMapping
     public Film create(@RequestBody @Valid Film newFilm) {
-        //log.info("Добавлен фильм {}", newFilm);
         return service.createFilm(newFilm);
     }
 
     @PutMapping
     public Film update(@RequestBody @Valid Film newFilm) {
-        //   log.info("Обновлен фильм {}", oldFilm);
         return service.updateFilm(newFilm);
 
     }
 
     @PutMapping("{id}/like/{userId}")
-    public Film setLike(@PathVariable long id,
+    public void setLike(@PathVariable long id,
                         @PathVariable long userId) {
         //log.info("Пользователь с id={} поставил лайк фильму {}", userId, id);
-        return service.setLike(id, userId);
+        service.setLike(id, userId);
     }
 
     @DeleteMapping("{id}/like/{userId}")
-    public Film delLike(@PathVariable long id,
+    public void delLike(@PathVariable long id,
                         @PathVariable long userId) {
         //log.info("Удален лайк пользователя с id={} с фильма {}", userId, id);
-        return service.delLike(id, userId);
+        service.delLike(id, userId);
     }
 
     @GetMapping("popular")
-    public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") int count) {
+    public Collection<Film> getPopularFilms(@RequestParam(defaultValue = "10") int count) {
         return service.getPopularFilms(count);
     }
 }

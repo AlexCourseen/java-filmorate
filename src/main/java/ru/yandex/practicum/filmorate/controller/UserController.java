@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ru.yandex.practicum.filmorate.model.Friend;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
@@ -48,21 +49,19 @@ public class UserController {
     }
 
     @GetMapping("/{id}/friends")
-    public List<User> getFriends(@PathVariable long id) {
-        return service.getFriends(id);
+    public Collection<Friend> getFriends(@PathVariable long id) {
+        return service.getUserFriends(id);
     }
 
     @DeleteMapping("{id}/friends/{friendId}")
-    public List<User> delFriend(@PathVariable long id,
+    public void delFriend(@PathVariable long id,
                                 @PathVariable long friendId) {
-        return service.delFriend(id, friendId);
+        service.delFriend(id, friendId);
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
-    public List<User> getCommonFriends(@PathVariable long id,
+    public List<Friend> getCommonFriends(@PathVariable long id,
                                        @PathVariable long otherId) {
         return service.commonFriends(id, otherId);
     }
-
-
 }
