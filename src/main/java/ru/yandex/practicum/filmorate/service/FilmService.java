@@ -43,4 +43,8 @@ public class FilmService {
     public Collection<Film> getPopularFilms(int count) {
         return filmStorage.getPopularFilms(count);
     }
+
+    public Collection<Film> getFilmsByDirector(long id, String query) {
+        return filmStorage.getFilmsByDirector(id, query);
+    }
 }
