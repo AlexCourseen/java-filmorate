@@ -4,7 +4,6 @@ MERGE INTO rating (name) KEY(name) VALUES ('PG-13');
 MERGE INTO rating (name) KEY(name) VALUES ('R');
 MERGE INTO rating (name) KEY(name) VALUES ('NC-17');
 
-
 MERGE INTO genre (name) KEY(name) VALUES ('Комедия');
 MERGE INTO genre (name) KEY(name) VALUES ('Драма');
 MERGE INTO genre (name) KEY(name) VALUES ('Мультфильм');
