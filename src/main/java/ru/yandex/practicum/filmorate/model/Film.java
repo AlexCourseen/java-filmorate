@@ -16,5 +16,5 @@ public class Film {
     private Rating mpa;
     private Set<Genre> genres = new HashSet<>();
     private Set<Like> likes = new HashSet<>();
-
+    private Set<Director> directors = new HashSet<>();
 }
