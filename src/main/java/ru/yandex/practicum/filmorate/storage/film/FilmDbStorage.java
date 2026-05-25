@@ -136,7 +136,7 @@ public class FilmDbStorage extends BaseDbStorage<Film> implements FilmStorage {
     }
 
     @Override
-    public Collection<Film> getPopularFilms(int count, Integer genreId, Integer year) {
+    public Collection<Film> getPopularFilms(int count, Integer genreId, String year) {
         StringBuilder sql = new StringBuilder(
                 "SELECT f.*, r.name AS mpa_name " +
                         "FROM film f " +

@@ -40,7 +40,7 @@ public class FilmService {
         likeStorage.delLike(filmId, userId);
     }
 
-    public Collection<Film> getPopularFilms(int count, Integer genreId, Integer year) {
+    public Collection<Film> getPopularFilms(int count, Integer genreId, String year) {
         return filmStorage.getPopularFilms(count, genreId, year);
     }
 

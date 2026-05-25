@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Rating;
@@ -19,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
+@Transactional
 public class FilmDbStorageTest {
     private final FilmDbStorage filmStorage;
 
@@ -95,10 +97,33 @@ public class FilmDbStorageTest {
 
     @Test
     void shouldReturnPopularFilmsSortedByLikes() {
-        Collection<Film> films = filmStorage.getPopularFilms(3,1, 2000);
+        Collection<Film> films = filmStorage.getPopularFilms(3,null, null);
         assertThat(films).hasSize(3);
         assertThat(films)
                 .extracting(Film::getId)
                 .containsExactly(1L, 3L, 2L);
+    }
+
+    @Test
+    void shouldReturnPopularFilmsByYear() {
+        Collection<Film> films = filmStorage.getPopularFilms(5, null, "2000");
+        assertThat(films).hasSize(1);
+        assertThat(films.iterator().next().getId()).isEqualTo(1L);
+    }
+
+    @Test
+    void shouldReturnPopularFilmsByGenre() {
+        Collection<Film> films = filmStorage.getPopularFilms(2, 2, null);
+        assertThat(films).hasSize(2);
+        assertThat(films)
+                .extracting(Film::getId)
+                .containsExactly(1L, 3L);
+    }
+
+    @Test
+    void shouldReturnPopularFilmsByGenreAndYear() {
+        Collection<Film> films = filmStorage.getPopularFilms(10, 2, "2000");
+        assertThat(films).hasSize(1);
+        assertThat(films.iterator().next().getId()).isEqualTo(1L);
     }
 }
