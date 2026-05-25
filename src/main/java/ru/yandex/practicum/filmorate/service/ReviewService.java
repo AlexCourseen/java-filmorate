@@ -12,7 +12,7 @@ import ru.yandex.practicum.filmorate.storage.review.ReviewStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.util.List;
+import java.util.Collection;
 
 @Slf4j
 @Service
@@ -68,7 +68,7 @@ public class ReviewService {
                 .orElseThrow(() -> new NotFoundException("Отзыв с id=" + reviewId + " не найден"));
     }
 
-    public List<Review> getReviews(Long filmId, Integer count) {
+    public Collection<Review> getReviews(Long filmId, Integer count) {
         int limit = (count == null || count <= 0) ? 10 : count;
 
         if (filmId != null) {

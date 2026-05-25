@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.service.ReviewService;
 
+import java.util.Collection;
 import java.util.List;
 
 @Slf4j
@@ -42,7 +43,7 @@ public class ReviewController {
     }
 
     @GetMapping
-    public List<Review> getReviews(
+    public Collection<Review> getReviews(
             @RequestParam(required = false) Long filmId,
             @RequestParam(required = false, defaultValue = "10") Integer count) {
         log.info("GET /reviews - получение отзывов, filmId={}, count={}", filmId, count);

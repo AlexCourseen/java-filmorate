@@ -1,34 +1,24 @@
 package ru.yandex.practicum.filmorate.storage.review;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Review;
+import ru.yandex.practicum.filmorate.storage.BaseDbStorage;
 import ru.yandex.practicum.filmorate.storage.mappers.ReviewRowMapper;
 
-import java.sql.PreparedStatement;
-import java.sql.Statement;
-import java.util.List;
-import java.util.Objects;
+import java.util.Collection;
 import java.util.Optional;
 
 @Repository
-@RequiredArgsConstructor
-public class ReviewDbStorage implements ReviewStorage {
-
-    private final JdbcTemplate jdbcTemplate;
-    private final ReviewRowMapper reviewRowMapper;
+public class ReviewDbStorage extends BaseDbStorage<Review> implements ReviewStorage {
 
     private static final String CREATE_REVIEW = """
-            INSERT INTO reviews (content, is_positive, user_id, film_id, useful)
-            VALUES (?, ?, ?, ?, ?)
+        INSERT INTO reviews (content, is_positive, user_id, film_id, useful)
+        VALUES (?, ?, ?, ?, ?)
     """;
 
     private static final String UPDATE_REVIEW = """
-            UPDATE reviews SET content = ?, is_positive = ?
-            WHERE review_id = ?
+        UPDATE reviews SET content = ?, is_positive = ? WHERE review_id = ?
     """;
 
     private static final String DELETE_REVIEW = """
@@ -55,61 +45,58 @@ public class ReviewDbStorage implements ReviewStorage {
         SELECT COUNT(*) FROM reviews WHERE user_id = ? AND film_id = ?
     """;
 
+    public ReviewDbStorage(JdbcTemplate jdbc, ReviewRowMapper mapper) {
+        super(jdbc, mapper);
+    }
+
     @Override
     public Review create(Review review) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-
-        jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(CREATE_REVIEW, Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1, review.getContent());
-            ps.setBoolean(2, review.getIsPositive());
-            ps.setLong(3, review.getUserId());
-            ps.setLong(4, review.getFilmId());
-            ps.setInt(5, 0); // при создании рейтинг равен 0
-            return ps;
-        }, keyHolder);
-
-        review.setReviewId(Objects.requireNonNull(keyHolder.getKey()).longValue());
+        long reviewId = insert(CREATE_REVIEW,
+                review.getContent(),
+                review.getIsPositive(),
+                review.getUserId(),
+                review.getFilmId(),
+                0
+        );
+        review.setReviewId(reviewId);
         review.setUseful(0);
         return review;
     }
 
     @Override
     public Review update(Review review) {
-        jdbcTemplate.update(UPDATE_REVIEW, review.getContent(), review.getIsPositive(),
-                review.getReviewId());
+        update(UPDATE_REVIEW, review.getContent(), review.getIsPositive(), review.getReviewId());
         return getById(review.getReviewId()).orElse(null);
     }
 
     @Override
     public void delete(Long reviewId) {
-        jdbcTemplate.update(DELETE_REVIEW, reviewId);
+        update(DELETE_REVIEW, reviewId);
     }
 
     @Override
     public Optional<Review> getById(Long reviewId) {
-        List<Review> result = jdbcTemplate.query(GET_REVIEW_BY_ID, reviewRowMapper, reviewId);
-        return result.isEmpty() ? Optional.empty() : Optional.of(result.get(0));
+        return findOne(GET_REVIEW_BY_ID, reviewId);
     }
 
     @Override
-    public List<Review> getByFilmId(Long filmId, int limit) {
-        return jdbcTemplate.query(GET_REVIEWS_BY_FILM_ID, reviewRowMapper, filmId, limit);
+    public Collection<Review> getByFilmId(Long filmId, int limit) {
+        return findMany(GET_REVIEWS_BY_FILM_ID, filmId, limit);
     }
 
     @Override
-    public List<Review> getAll(int limit) {
-        return jdbcTemplate.query(GET_ALL_REVIEWS, reviewRowMapper, limit);
+    public Collection<Review> getAll(int limit) {
+        return findMany(GET_ALL_REVIEWS, limit);
     }
 
     @Override
     public void updateUseful(Long reviewId, Integer useful) {
-        jdbcTemplate.update(UPDATE_USEFUL, useful, reviewId);
+        update(UPDATE_USEFUL, useful, reviewId);
     }
 
     @Override
     public boolean existsByUserAndFilm(Long userId, Long filmId) {
-        Integer count = jdbcTemplate.queryForObject(EXISTS_BY_USER_AND_FILM, Integer.class, userId, filmId);
+        Integer count = jdbc.queryForObject(EXISTS_BY_USER_AND_FILM, Integer.class, userId, filmId);
         return count != null && count > 0;
     }
 }
