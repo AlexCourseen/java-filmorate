@@ -95,7 +95,7 @@ public class FilmDbStorageTest {
 
     @Test
     void shouldReturnPopularFilmsSortedByLikes() {
-        Collection<Film> films = filmStorage.getPopularFilms(3);
+        Collection<Film> films = filmStorage.getPopularFilms(3,1, 2000);
         assertThat(films).hasSize(3);
         assertThat(films)
                 .extracting(Film::getId)

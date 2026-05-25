@@ -61,8 +61,8 @@ public class FilmController {
     }
 
     @GetMapping("popular")
-    public Collection<Film> getPopularFilms(@RequestParam(defaultValue = "10") int count) {
-        return service.getPopularFilms(count);
+    public Collection<Film> getPopularFilms(@RequestParam(defaultValue = "10") int count, Integer genreId, Integer year) {
+        return service.getPopularFilms(count, genreId, year);
     }
 
     @GetMapping("/director/{id}")
