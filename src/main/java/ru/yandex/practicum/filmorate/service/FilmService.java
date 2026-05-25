@@ -54,7 +54,7 @@ public class FilmService {
             films = filmStorage.searchFilms(query, searchBy);
         } else {
             int defaultValueCount = 10;
-            films = filmStorage.getPopularFilms(defaultValueCount);
+            films = filmStorage.getPopularFilms(defaultValueCount, null, null);
         }
         return films;
     }
