@@ -113,3 +113,4 @@ public class ReviewDbStorage implements ReviewStorage {
         return count != null && count > 0;
     }
 }
+
