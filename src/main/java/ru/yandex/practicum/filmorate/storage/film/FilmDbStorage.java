@@ -72,7 +72,25 @@ public class FilmDbStorage extends BaseDbStorage<Film> implements FilmStorage {
                     "GROUP BY f.film_id, f.name, f.description, f.releaseDate, f.duration, f.rating_id " +
                     "ORDER BY COUNT(l.user_id) DESC";
     private static final String DEL_FILM_DIRECTORS = "DELETE FROM film_director WHERE film_id = ?";
-
+    private static final String SEARCH_FILMS_BY_DIRECTORS =
+            "SELECT f.*, r.name AS mpa_name " +
+                    "FROM film f " +
+                    "JOIN rating r ON f.rating_id = r.rating_id " +
+                    "JOIN film_director fd ON fd.film_id=f.film_id " +
+                    "JOIN directors d ON d.director_id=fd.director_id " +
+                    "WHERE d.name ILIKE ? ";
+    private static final String SEARCH_FILMS_BY_TITLE =
+            "SELECT f.*, r.name AS mpa_name " +
+                    "FROM film f " +
+                    "JOIN rating r ON f.rating_id = r.rating_id " +
+                    "WHERE f.name ILIKE ? ";
+    private static final String SEARCH_FILMS_BY_DIRS_AND_FILM_NAME =
+            "SELECT f.*, r.name AS mpa_name " +
+                    "FROM film f " +
+                    "JOIN rating r ON f.rating_id = r.rating_id " +
+                    "LEFT JOIN film_director fd ON fd.film_id=f.film_id " +
+                    "LEFT JOIN directors d ON d.director_id=fd.director_id " +
+                    "WHERE d.name ILIKE ? OR f.name ILIKE ?";
 
     @Autowired
     public FilmDbStorage(JdbcTemplate jdbc, FilmRowMapper mapper, GenreStorage genreStorage, LikeStorage likeStorage,
@@ -150,7 +168,10 @@ public class FilmDbStorage extends BaseDbStorage<Film> implements FilmStorage {
     @Override
     public Collection<Film> getPopularFilms(int count) {
         Collection<Film> films = findMany(GET_POPULAR_FILMS, count);
-        films.forEach(this::setLikesAndGenres);
+        films.forEach(f -> {
+            setLikesAndGenres(f);
+            setDirectors(f);
+        });
         return films;
     }
 
@@ -174,6 +195,24 @@ public class FilmDbStorage extends BaseDbStorage<Film> implements FilmStorage {
     public void delFim(long id) {
         update(DEL_FILM, id);
     }
+
+    public Collection<Film> searchFilms(String query, String searchBy) {
+        Collection<Film> films = new ArrayList<>();
+        String searchPattern = "%" + query + "%";
+        if (searchBy.equals("director")) {
+            films = findMany(SEARCH_FILMS_BY_DIRECTORS, searchPattern);
+        } else if (searchBy.equals("title")) {
+            films = findMany(SEARCH_FILMS_BY_TITLE, searchPattern);
+        } else if (searchBy.contains("director") && searchBy.contains("title")) {
+            films = findMany(SEARCH_FILMS_BY_DIRS_AND_FILM_NAME, searchPattern, searchPattern);
+        }
+        films.forEach(f -> {
+            setLikesAndGenres(f);
+            setDirectors(f);
+        });
+        return films;
+    }
+
 
     private void checkFilm(Film film) {
         if (film.getName().isBlank() || film.getName() == null) {

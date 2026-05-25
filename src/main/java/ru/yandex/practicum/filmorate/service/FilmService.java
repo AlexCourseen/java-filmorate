@@ -47,4 +47,15 @@ public class FilmService {
     public Collection<Film> getFilmsByDirector(long id, String query) {
         return filmStorage.getFilmsByDirector(id, query);
     }
+
+    public Collection<Film> searchFilms(String query, String searchBy) {
+        Collection<Film> films;
+        if ((!query.isBlank() || query != null) && (!searchBy.isBlank() || searchBy != null)) {
+            films = filmStorage.searchFilms(query, searchBy);
+        } else {
+            int defaultValueCount = 10;
+            films = filmStorage.getPopularFilms(defaultValueCount);
+        }
+        return films;
+    }
 }

@@ -70,4 +70,10 @@ public class FilmController {
                                                @RequestParam(defaultValue = "year") String sortBy) {
         return service.getFilmsByDirector(id, sortBy);
     }
+
+    @GetMapping("/search")
+    public Collection<Film> searchFilms(@RequestParam String query,
+                                        @RequestParam String by) {
+        return service.searchFilms(query, by);
+    }
 }
