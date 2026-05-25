@@ -72,6 +72,11 @@ public class InMemoryFilmStorage implements FilmStorage {
         return films.values();
     }
 
+    @Override
+    public Collection<Film> searchFilms(String query, String searchBy) {
+        return films.values();
+    }
+
     private long getNextId() {
         long maxId = films.keySet()
                 .stream()
