@@ -76,4 +76,10 @@ public class FilmController {
                                         @RequestParam String by) {
         return service.searchFilms(query, by);
     }
+
+    @DeleteMapping("/{filmId}")
+    public void deleteFilm(@PathVariable long filmId) {
+        log.info("Удаление фильма с id={}", filmId);
+        service.deleteFilm(filmId);
+    }
 }

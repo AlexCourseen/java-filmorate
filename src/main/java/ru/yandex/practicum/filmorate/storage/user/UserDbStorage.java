@@ -68,8 +68,9 @@ public class UserDbStorage extends BaseDbStorage<User> implements UserStorage {
         throw new NotFoundException("Юзер с id = " + userId + " не найден");
     }
 
-    public void delUser(long id) {
-        update(DEL_USER,id);
+    public void deleteUser(long id) {
+        getUser(id);
+        update(DEL_USER, id);
     }
 
     private void checkUser(User user) {
