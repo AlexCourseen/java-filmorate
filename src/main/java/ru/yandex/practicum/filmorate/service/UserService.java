@@ -12,7 +12,6 @@ import ru.yandex.practicum.filmorate.storage.event.EventStorage;
 import ru.yandex.practicum.filmorate.storage.friendship.FriendStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 

@@ -5,13 +5,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.enums.EventType;
 import ru.yandex.practicum.filmorate.enums.Operation;
-import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.event.EventStorage;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.like.LikeStorage;
 
-import java.time.LocalDateTime;
 import java.util.Collection;
 
 @Service
