@@ -41,3 +41,5 @@ MERGE INTO likes (film_id, user_id) VALUES (2, 2);
 MERGE INTO likes (film_id, user_id) VALUES (3, 4);
 MERGE INTO likes (film_id, user_id) VALUES (3, 2);
 MERGE INTO likes (film_id, user_id) VALUES (3, 1);
+
+
