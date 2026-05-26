@@ -36,11 +36,20 @@ public class FilmDbStorage extends BaseDbStorage<Film> implements FilmStorage {
     private static final String UPDATE_FILM = "UPDATE film SET name=?, description=?, releaseDate=?," +
             " duration=?, rating_id=? WHERE film_id = ?";
     private static final String DEL_FILM = "DELETE FROM users WHERE user_id = ?";
-
     private static final String GENRES_TO_FILM = "MERGE INTO film_genre(genre_id, film_id) " +
             "KEY(genre_id, film_id) VALUES (?, ?)";
     private static final String DEL_FILM_GENRES = "DELETE FROM film_genre WHERE film_id = ?";
-
+    private static final String GET_POPULAR_FILMS_COMPLEX =
+            "SELECT f.*, r.name AS mpa_name " +
+                    "FROM film f " +
+                    "LEFT JOIN likes l ON f.film_id = l.film_id " +
+                    "LEFT JOIN rating r ON f.rating_id = r.rating_id " +
+                    "LEFT JOIN film_genre fg ON f.film_id = fg.film_id " +
+                    "WHERE (? IS NULL OR fg.genre_id = ?) " +
+                    "  AND (? IS NULL OR YEAR(f.releaseDate) = ?) " +
+                    "GROUP BY f.film_id, r.name " +
+                    "ORDER BY COUNT(DISTINCT l.user_id) DESC " +
+                    "LIMIT ?";
     private static final String DIRECTORS_TO_FILM = "MERGE INTO film_director(director_id, film_id) " +
             "KEY(director_id, film_id) VALUES (?, ?)";
     private static final String FILMS_BY_DIR_ORDER_YEAR =
@@ -154,35 +163,18 @@ public class FilmDbStorage extends BaseDbStorage<Film> implements FilmStorage {
     }
 
     @Override
+    public Collection<Film> getPopularFilms(int count) {
+        return getPopularFilms(count, null, null);
+    }
+
+    @Override
     public Collection<Film> getPopularFilms(int count, Integer genreId, String year) {
-        StringBuilder sql = new StringBuilder(
-                "SELECT f.*, r.name AS mpa_name " +
-                        "FROM film f " +
-                        "LEFT JOIN likes l ON f.film_id = l.film_id " +
-                        "LEFT JOIN rating r ON f.rating_id = r.rating_id " +
-                        "LEFT JOIN film_genre fg ON f.film_id = fg.film_id " +
-                        "WHERE 1=1 "
-        );
+        Integer yearVal = (year != null) ? Integer.parseInt(year) : null;
 
-        List<Object> params = new ArrayList<>();
-        if (genreId != null) {
-            sql.append("AND fg.genre_id = ? ");
-            params.add(genreId);
-        }
-
-        if (year != null) {
-            sql.append("AND YEAR(f.releaseDate) = ? ");
-            params.add(year);
-        }
-
-        sql.append(
-                "GROUP BY f.film_id, r.name " +
-                        "ORDER BY COUNT(DISTINCT l.user_id) DESC " +
-                        "LIMIT ?"
-        );
-        params.add(count);
-
-        Collection<Film> films = findMany(sql.toString(), params.toArray());
+        Collection<Film> films = findMany(GET_POPULAR_FILMS_COMPLEX,
+                genreId, genreId,
+                yearVal, yearVal,
+                count);
 
         films.forEach(f -> {
             setLikesAndGenres(f);
@@ -190,7 +182,6 @@ public class FilmDbStorage extends BaseDbStorage<Film> implements FilmStorage {
         });
         return films;
     }
-
 
     @Override
     public Collection<Film> getFilmsByDirector(long id, String query) {

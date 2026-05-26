@@ -44,6 +44,7 @@ public class FilmService {
         return filmStorage.getPopularFilms(count, genreId, year);
     }
 
+
     public Collection<Film> getFilmsByDirector(long id, String query) {
         return filmStorage.getFilmsByDirector(id, query);
     }
@@ -54,7 +55,7 @@ public class FilmService {
             films = filmStorage.searchFilms(query, searchBy);
         } else {
             int defaultValueCount = 10;
-            films = filmStorage.getPopularFilms(defaultValueCount, null, null);
+            films = filmStorage.getPopularFilms(defaultValueCount);
         }
         return films;
     }
