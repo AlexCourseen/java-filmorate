@@ -67,7 +67,7 @@ public class FilmDbStorageTest {
         assertThat(filmDb.getDuration()).isEqualTo(120);
         assertThat(filmDb.getMpa().getId()).isEqualTo(1);
 
-        filmStorage.delFim(filmDb.getId());
+        filmStorage.deleteFilm(filmDb.getId());
     }
 
     @Test

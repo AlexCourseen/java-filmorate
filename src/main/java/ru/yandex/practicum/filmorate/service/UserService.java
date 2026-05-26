@@ -53,4 +53,8 @@ public class UserService {
                 .filter(otherUserFriends::contains)
                 .toList();
     }
+
+    public void deleteUser(long userId) {
+        storage.deleteUser(userId);
+    }
 }

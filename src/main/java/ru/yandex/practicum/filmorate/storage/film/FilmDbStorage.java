@@ -91,6 +91,7 @@ public class FilmDbStorage extends BaseDbStorage<Film> implements FilmStorage {
                     "LEFT JOIN film_director fd ON fd.film_id=f.film_id " +
                     "LEFT JOIN directors d ON d.director_id=fd.director_id " +
                     "WHERE d.name ILIKE ? OR f.name ILIKE ?";
+    private static final String DELETE_FILM = "DELETE FROM film WHERE film_id = ?";
 
     @Autowired
     public FilmDbStorage(JdbcTemplate jdbc, FilmRowMapper mapper, GenreStorage genreStorage, LikeStorage likeStorage,
@@ -166,6 +167,12 @@ public class FilmDbStorage extends BaseDbStorage<Film> implements FilmStorage {
     }
 
     @Override
+    public void deleteFilm(long id) {
+        getFilm(id);
+        update(DELETE_FILM, id);
+    }
+
+    @Override
     public Collection<Film> getPopularFilms(int count) {
         Collection<Film> films = findMany(GET_POPULAR_FILMS, count);
         films.forEach(f -> {
@@ -190,10 +197,6 @@ public class FilmDbStorage extends BaseDbStorage<Film> implements FilmStorage {
             setDirectors(f);
         });
         return films;
-    }
-
-    public void delFim(long id) {
-        update(DEL_FILM, id);
     }
 
     public Collection<Film> searchFilms(String query, String searchBy) {

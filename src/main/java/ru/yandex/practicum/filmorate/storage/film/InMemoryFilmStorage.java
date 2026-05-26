@@ -100,4 +100,12 @@ public class InMemoryFilmStorage implements FilmStorage {
             throw new ValidationException("Дата релиза не может быть раньше " + START_FILM_RELEASE_DATE);
         }
     }
+
+    @Override
+    public void deleteFilm(long filmId) {
+        if (!films.containsKey(filmId)) {
+            throw new NotFoundException("Фильм с id = " + filmId + " не найден");
+        }
+        films.remove(filmId);
+    }
 }
