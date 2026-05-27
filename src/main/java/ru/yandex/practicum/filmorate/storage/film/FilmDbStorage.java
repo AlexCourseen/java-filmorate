@@ -40,19 +40,20 @@ public class FilmDbStorage extends BaseDbStorage<Film> implements FilmStorage {
     private static final String UPDATE_FILM = "UPDATE film SET name=?, description=?, releaseDate=?," +
             " duration=?, rating_id=? WHERE film_id = ?";
     private static final String DEL_FILM = "DELETE FROM users WHERE user_id = ?";
-
-    private static final String GET_POPULAR_FILMS = "SELECT f.*, r.NAME as mpa_name " +
-            "FROM film f " +
-            "LEFT JOIN likes l ON f.film_id = l.film_id " +
-            "LEFT JOIN rating r ON f.rating_id = r.rating_id " +
-            "GROUP BY f.film_id, f.name, f.description, f.releaseDate, f.duration, f.rating_id " +
-            "ORDER BY COUNT(l.user_id) DESC " +
-            "LIMIT ?";
-
     private static final String GENRES_TO_FILM = "MERGE INTO film_genre(genre_id, film_id) " +
             "KEY(genre_id, film_id) VALUES (?, ?)";
     private static final String DEL_FILM_GENRES = "DELETE FROM film_genre WHERE film_id = ?";
-
+    private static final String GET_POPULAR_FILMS_COMPLEX =
+            "SELECT f.*, r.name AS mpa_name " +
+                    "FROM film f " +
+                    "LEFT JOIN likes l ON f.film_id = l.film_id " +
+                    "LEFT JOIN rating r ON f.rating_id = r.rating_id " +
+                    "LEFT JOIN film_genre fg ON f.film_id = fg.film_id " +
+                    "WHERE (? IS NULL OR fg.genre_id = ?) " +
+                    "  AND (? IS NULL OR YEAR(f.releaseDate) = ?) " +
+                    "GROUP BY f.film_id, r.name " +
+                    "ORDER BY COUNT(DISTINCT l.user_id) DESC " +
+                    "LIMIT ?";
     private static final String DIRECTORS_TO_FILM = "MERGE INTO film_director(director_id, film_id) " +
             "KEY(director_id, film_id) VALUES (?, ?)";
     private static final String FILMS_BY_DIR_ORDER_YEAR =
@@ -174,7 +175,18 @@ public class FilmDbStorage extends BaseDbStorage<Film> implements FilmStorage {
 
     @Override
     public Collection<Film> getPopularFilms(int count) {
-        Collection<Film> films = findMany(GET_POPULAR_FILMS, count);
+        return getPopularFilms(count, null, null);
+    }
+
+    @Override
+    public Collection<Film> getPopularFilms(int count, Integer genreId, String year) {
+        Integer yearVal = (year != null) ? Integer.parseInt(year) : null;
+
+        Collection<Film> films = findMany(GET_POPULAR_FILMS_COMPLEX,
+                genreId, genreId,
+                yearVal, yearVal,
+                count);
+
         films.forEach(f -> {
             setLikesAndGenres(f);
             setDirectors(f);
