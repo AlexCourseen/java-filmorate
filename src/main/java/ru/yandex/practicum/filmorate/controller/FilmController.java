@@ -61,8 +61,8 @@ public class FilmController {
     }
 
     @GetMapping("popular")
-    public Collection<Film> getPopularFilms(@RequestParam(defaultValue = "10") int count) {
-        return service.getPopularFilms(count);
+    public Collection<Film> getPopularFilms(@RequestParam(defaultValue = "10") int count, Integer genreId, String year) {
+        return service.getPopularFilms(count, genreId, year);
     }
 
     @GetMapping("/director/{id}")
@@ -75,5 +75,11 @@ public class FilmController {
     public Collection<Film> searchFilms(@RequestParam String query,
                                         @RequestParam String by) {
         return service.searchFilms(query, by);
+    }
+
+    @DeleteMapping("/{filmId}")
+    public void deleteFilm(@PathVariable long filmId) {
+        log.info("Удаление фильма с id={}", filmId);
+        service.deleteFilm(filmId);
     }
 }

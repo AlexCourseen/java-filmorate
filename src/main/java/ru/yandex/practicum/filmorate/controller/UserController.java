@@ -70,4 +70,16 @@ public class UserController {
     public Collection<Event> getEvents(@PathVariable long id) {
         return service.getEvents(id);
     }
+
+    @DeleteMapping("/{userId}")
+    public void deleteUser(@PathVariable long userId) {
+        log.info("Удаление пользователя с id={}", userId);
+        service.deleteUser(userId);
+    }
+
+    @GetMapping("/{userId}")
+    public User getUser(@PathVariable long userId) {
+        log.info("Получение пользователя с id={}", userId);
+        return service.getUser(userId);
+    }
 }

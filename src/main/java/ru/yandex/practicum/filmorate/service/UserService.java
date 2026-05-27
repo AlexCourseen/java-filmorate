@@ -66,4 +66,8 @@ public class UserService {
         return eventStorage.getAllEvents(userId);
     }
 
+
+    public void deleteUser(long userId) {
+        storage.deleteUser(userId);
+    }
 }

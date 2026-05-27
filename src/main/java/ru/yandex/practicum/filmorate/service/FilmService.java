@@ -46,9 +46,10 @@ public class FilmService {
         eventStorage.addEvent(userId,EventType.LIKE,Operation.REMOVE,filmId);
     }
 
-    public Collection<Film> getPopularFilms(int count) {
-        return filmStorage.getPopularFilms(count);
+    public Collection<Film> getPopularFilms(int count, Integer genreId, String year) {
+        return filmStorage.getPopularFilms(count, genreId, year);
     }
+
 
     public Collection<Film> getFilmsByDirector(long id, String query) {
         return filmStorage.getFilmsByDirector(id, query);
@@ -63,5 +64,9 @@ public class FilmService {
             films = filmStorage.getPopularFilms(defaultValueCount);
         }
         return films;
+    }
+
+    public void deleteFilm(long filmId) {
+        filmStorage.deleteFilm(filmId);
     }
 }
