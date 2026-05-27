@@ -62,8 +62,8 @@ public class UserService {
                 .toList();
     }
 
-    public List<Event> getEvents(long userId) {
-        return eventStorage.getAllEvents(userId).stream().toList();
+    public Collection<Event> getEvents(long userId) {
+        return eventStorage.getAllEvents(userId);
     }
 
 }
