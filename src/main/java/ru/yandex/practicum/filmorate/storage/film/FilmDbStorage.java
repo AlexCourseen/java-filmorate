@@ -93,6 +93,21 @@ public class FilmDbStorage extends BaseDbStorage<Film> implements FilmStorage {
                     "LEFT JOIN directors d ON d.director_id=fd.director_id " +
                     "WHERE d.name ILIKE ? OR f.name ILIKE ?";
     private static final String DELETE_FILM = "DELETE FROM film WHERE film_id = ?";
+    private static final String GET_COMMON_FILMS =
+            "SELECT f.*, r.name AS mpa_name " +
+                    "FROM film f " +
+                    "LEFT JOIN rating r ON f.rating_id = r.rating_id " +
+                    "WHERE f.film_id IN (" +
+                    "    SELECT l1.film_id " +
+                    "    FROM likes l1 " +
+                    "    INNER JOIN likes l2 ON l1.film_id = l2.film_id " +
+                    "    WHERE l1.user_id = ? AND l2.user_id = ?" +
+                    ") " +
+                    "ORDER BY (" +
+                    "    SELECT COUNT(l.user_id) " +
+                    "    FROM likes l " +
+                    "    WHERE l.film_id = f.film_id" +
+                    ") DESC";
 
     @Autowired
     public FilmDbStorage(JdbcTemplate jdbc, FilmRowMapper mapper, GenreStorage genreStorage, LikeStorage likeStorage,
@@ -204,6 +219,16 @@ public class FilmDbStorage extends BaseDbStorage<Film> implements FilmStorage {
                 films = findMany(FILMS_BY_DIR_ORDER_YEAR, id);
             }
         }
+        films.forEach(f -> {
+            setLikesAndGenres(f);
+            setDirectors(f);
+        });
+        return films;
+    }
+
+    @Override
+    public Collection<Film> getCommonFilms(long userId, long friendId) {
+        Collection<Film> films = findMany(GET_COMMON_FILMS, userId, friendId);
         films.forEach(f -> {
             setLikesAndGenres(f);
             setDirectors(f);

@@ -117,4 +117,13 @@ public class InMemoryFilmStorage implements FilmStorage {
         }
         films.remove(filmId);
     }
+
+    @Override
+    public Collection<Film> getCommonFilms(long userId, long friendId) {
+        return getAllFilms().stream()
+                .filter(film -> film.getLikes().stream().anyMatch(like -> like.getUserId() == userId))
+                .filter(film -> film.getLikes().stream().anyMatch(like -> like.getUserId() == friendId))
+                .sorted(Comparator.comparingInt((Film film) -> film.getLikes().size()).reversed())
+                .collect(Collectors.toList());
+    }
 }
