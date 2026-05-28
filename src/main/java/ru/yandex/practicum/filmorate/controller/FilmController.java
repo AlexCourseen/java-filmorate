@@ -82,4 +82,12 @@ public class FilmController {
         log.info("Удаление фильма с id={}", filmId);
         service.deleteFilm(filmId);
     }
+
+    @GetMapping("/common")
+    public Collection<Film> getCommonFilms(@RequestParam long userId,
+                                           @RequestParam long friendId) {
+        log.info("GET /films/common - получение общих фильмов пользователей {} и {}", userId, friendId);
+        return service.getCommonFilms(userId, friendId);
+    }
 }
+
