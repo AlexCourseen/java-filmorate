@@ -6,10 +6,12 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.enums.EventType;
 import ru.yandex.practicum.filmorate.enums.Operation;
 import ru.yandex.practicum.filmorate.model.Event;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Friend;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.event.EventStorage;
 import ru.yandex.practicum.filmorate.storage.friendship.FriendStorage;
+import ru.yandex.practicum.filmorate.storage.recomendation.RecommendationStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.Collection;
@@ -21,8 +23,8 @@ public class UserService {
     private final FriendStorage friendStorage;
     @Qualifier("userDbStorage")
     private final UserStorage storage;
-
     private final EventStorage eventStorage;
+    private final RecommendationStorage recommendationStorage;
 
     public User getUser(long id) {
         return storage.getUser(id);
@@ -69,5 +71,10 @@ public class UserService {
 
     public void deleteUser(long userId) {
         storage.deleteUser(userId);
+    }
+
+    public Collection<Film> getFilmRecommendation(long userId) {
+        storage.getUser(userId);
+        return recommendationStorage.getRecommendations(userId);
     }
 }
