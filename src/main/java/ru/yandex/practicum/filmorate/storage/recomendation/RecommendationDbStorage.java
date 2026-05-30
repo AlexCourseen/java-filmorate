@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.BaseDbStorage;
+import ru.yandex.practicum.filmorate.storage.film.FilmDbStorage;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -14,6 +15,7 @@ import java.util.List;
 @Repository("recommendationDbStorage")
 public class RecommendationDbStorage extends BaseDbStorage<Film> implements RecommendationStorage {
 
+    private final FilmDbStorage filmDbStorage;
     private static final String FIND_SIMILAR_USER = "SELECT l2.user_id FROM likes l1 JOIN likes l2 ON " +
             "l1.film_id = l2.film_id WHERE l1.user_id = ? AND l2.user_id != ? " +
             "GROUP BY l2.user_id ORDER BY COUNT(*) DESC LIMIT 1";
@@ -28,8 +30,9 @@ public class RecommendationDbStorage extends BaseDbStorage<Film> implements Reco
     private static final String HAS_LIKES = "SELECT COUNT(*) > 0 FROM likes WHERE user_id = ?";
 
     @Autowired
-    public RecommendationDbStorage(JdbcTemplate jdbc, RowMapper<Film> mapper) {
+    public RecommendationDbStorage(JdbcTemplate jdbc, RowMapper<Film> mapper, FilmDbStorage filmDbStorage) {
         super(jdbc, mapper);
+        this.filmDbStorage = filmDbStorage;
     }
 
     @Override
@@ -46,7 +49,9 @@ public class RecommendationDbStorage extends BaseDbStorage<Film> implements Reco
 
         Long similarUserId = similarUsers.get(0);
 
-        return findMany(FIND_RECOMMENDATIONS, similarUserId, userId);
+        Collection<Film> films = findMany(FIND_RECOMMENDATIONS, similarUserId, userId);
+        films.forEach(film -> filmDbStorage.setLikesAndGenres(film));
+        return films;
     }
 
     private boolean hasLikes(long userId) {

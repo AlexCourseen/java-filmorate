@@ -41,6 +41,9 @@ public class UserDbStorage extends BaseDbStorage<User> implements UserStorage {
     @Override
     public User createUser(User user) {
         checkUser(user);
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
+        }
         Object[] params = new Object[]{
                 user.getName(),
                 user.getEmail(),
@@ -55,6 +58,9 @@ public class UserDbStorage extends BaseDbStorage<User> implements UserStorage {
     public User updateUser(User user) {
         long userId = user.getId();
         if (getUser(userId) != null) {
+            if (user.getName() == null || user.getName().isBlank()) {
+                user.setName(user.getLogin());
+            }
             Object[] params = new Object[]{
                     user.getName(),
                     user.getEmail(),

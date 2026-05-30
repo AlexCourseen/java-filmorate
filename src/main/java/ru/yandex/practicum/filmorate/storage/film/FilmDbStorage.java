@@ -68,7 +68,7 @@ public class FilmDbStorage extends BaseDbStorage<Film> implements FilmStorage {
                     "FROM film f " +
                     "JOIN film_director fd ON fd.film_id=f.film_id " +
                     "JOIN rating r ON f.rating_id = r.rating_id " +
-                    "JOIN likes l ON l.film_id=f.film_id " +
+                    "LEFT JOIN likes l ON l.film_id=f.film_id " +
                     "WHERE fd.director_id = ? " +
                     "GROUP BY f.film_id, f.name, f.description, f.releaseDate, f.duration, f.rating_id " +
                     "ORDER BY COUNT(l.user_id) DESC";
@@ -91,7 +91,8 @@ public class FilmDbStorage extends BaseDbStorage<Film> implements FilmStorage {
                     "JOIN rating r ON f.rating_id = r.rating_id " +
                     "LEFT JOIN film_director fd ON fd.film_id=f.film_id " +
                     "LEFT JOIN directors d ON d.director_id=fd.director_id " +
-                    "WHERE d.name ILIKE ? OR f.name ILIKE ?";
+                    "WHERE d.name ILIKE ? OR f.name ILIKE ?" +
+                    "ORDER BY f.film_id DESC";
     private static final String DELETE_FILM = "DELETE FROM film WHERE film_id = ?";
     private static final String GET_COMMON_FILMS =
             "SELECT f.*, r.name AS mpa_name " +
@@ -318,7 +319,7 @@ public class FilmDbStorage extends BaseDbStorage<Film> implements FilmStorage {
         filmDirectors.forEach(dir -> update(DIRECTORS_TO_FILM, dir.getId(), filmId));
     }
 
-    private void setLikesAndGenres(Film film) {
+    public void setLikesAndGenres(Film film) {
         film.setGenres(new LinkedHashSet<>(genreStorage.getGenresByFilmId(film.getId())));
         film.setLikes(new HashSet<>(likeStorage.getLikes(film.getId())));
     }
