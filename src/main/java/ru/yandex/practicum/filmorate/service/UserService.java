@@ -47,8 +47,12 @@ public class UserService {
         eventStorage.addEvent(userId, EventType.FRIEND, Operation.ADD, idFriend);
     }
 
-    public Collection<Friend> getUserFriends(long idUser) {
-        return friendStorage.getUserFriends(idUser);
+    public Collection<User> getUserFriends(long idUser) {
+        return friendStorage.getUserFriends(idUser)
+                .stream()
+                .map(Friend::getId)
+                .map(this::getUser)
+                .toList();
     }
 
     public void delFriend(long userId, long idFriend) {
@@ -56,11 +60,13 @@ public class UserService {
         eventStorage.addEvent(userId, EventType.FRIEND, Operation.REMOVE, idFriend);
     }
 
-    public List<Friend> commonFriends(long userId, long otherId) {
+    public List<User> commonFriends(long userId, long otherId) {
         Collection<Friend> userFriends = friendStorage.getUserFriends(userId);
         Collection<Friend> otherUserFriends = friendStorage.getUserFriends(otherId);
         return userFriends.stream()
                 .filter(otherUserFriends::contains)
+                .map(Friend::getId)
+                .map(this::getUser)
                 .toList();
     }
 
