@@ -43,7 +43,7 @@ public class ReviewService {
         Review createdReview = reviewStorage.create(review);
         log.info("Создан отзыв с id={} для фильма {} пользователем {}",
                 createdReview.getReviewId(), createdReview.getFilmId(), createdReview.getUserId());
-        eventStorage.addEvent(review.getUserId(), EventType.REVIEW, Operation.ADD, review.getReviewId());
+        eventStorage.addEvent(createdReview.getUserId(), EventType.REVIEW, Operation.ADD, createdReview.getReviewId());
         return createdReview;
     }
 
@@ -58,7 +58,8 @@ public class ReviewService {
 
         Review updatedReview = reviewStorage.update(existing);
         log.info("Обновлён отзыв с id={}", updatedReview.getReviewId());
-        eventStorage.addEvent(review.getUserId(), EventType.REVIEW, Operation.UPDATE, review.getReviewId());
+        eventStorage.addEvent(existing.getUserId(), EventType.REVIEW, Operation.UPDATE, updatedReview.getReviewId());
+        
         return updatedReview;
     }
 
