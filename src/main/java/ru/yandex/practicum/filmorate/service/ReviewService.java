@@ -91,37 +91,36 @@ public class ReviewService {
     public void addDislike(Long reviewId, Long userId) {
         userStorage.getUser(userId);
         Review review = getReviewById(reviewId);
-
+        int newUseful = 0;
         if (reviewLikeStorage.existsLike(reviewId, userId)) {
             reviewLikeStorage.removeLike(reviewId, userId);
             reviewLikeStorage.addDislike(reviewId, userId);
-            int newUseful = review.getUseful() - 2;
-            reviewStorage.updateUseful(reviewId, newUseful);
+            newUseful = review.getUseful() - 2;
             log.info("Пользователь {} сменил лайк на дизлайк для отзыва {}", userId, reviewId);
         } else if (!reviewLikeStorage.existsDislike(reviewId, userId)) {
             reviewLikeStorage.addDislike(reviewId, userId);
-            int newUseful = review.getUseful() - 1;
-            reviewStorage.updateUseful(reviewId, newUseful);
+            newUseful = review.getUseful() - 1;
             log.info("Пользователь {} поставил дизлайк отзыву {}", userId, reviewId);
         }
+        reviewStorage.updateUseful(reviewId, newUseful);
     }
 
     public void addLike(Long reviewId, Long userId) {
         userStorage.getUser(userId);
         Review review = getReviewById(reviewId);
-
+        int newUseful = 0;
         if (reviewLikeStorage.existsDislike(reviewId, userId)) {
             reviewLikeStorage.removeDislike(reviewId, userId);
             reviewLikeStorage.addLike(reviewId, userId);
-            int newUseful = review.getUseful() + 2;
-            reviewStorage.updateUseful(reviewId, newUseful);
+            newUseful = review.getUseful() + 2;
             log.info("Пользователь {} сменил дизлайк на лайк для отзыва {}", userId, reviewId);
         } else if (!reviewLikeStorage.existsLike(reviewId, userId)) {
             reviewLikeStorage.addLike(reviewId, userId);
-            int newUseful = review.getUseful() + 1;
-            reviewStorage.updateUseful(reviewId, newUseful);
+            newUseful = review.getUseful() + 1;
             log.info("Пользователь {} поставил лайк отзыву {}", userId, reviewId);
         }
+        reviewStorage.updateUseful(reviewId, newUseful);
+
     }
 
     public void removeLike(Long reviewId, Long userId) {

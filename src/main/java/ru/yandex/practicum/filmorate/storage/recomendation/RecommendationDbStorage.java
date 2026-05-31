@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-@Repository("recommendationDbStorage")
+@Repository()
 public class RecommendationDbStorage extends BaseDbStorage<Film> implements RecommendationStorage {
 
     private final FilmDbStorage filmDbStorage;
