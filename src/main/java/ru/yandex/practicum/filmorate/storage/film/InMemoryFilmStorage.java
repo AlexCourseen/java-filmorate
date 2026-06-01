@@ -60,11 +60,30 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Collection<Film> getPopularFilms(int count) {
+        return getPopularFilms(count, null, null);
+    }
+
+    @Override
+    public Collection<Film> getPopularFilms(int count, Integer genreId, String year) {
+        Integer yearVal = (year != null) ? Integer.parseInt(year) : null;
+
         return getAllFilms()
                 .stream()
+                .filter(film -> yearVal == null || film.getReleaseDate().getYear() == yearVal)
+                .filter(film -> genreId == null || film.getGenres().stream().anyMatch(g -> g.getId() == genreId))
                 .sorted(Comparator.comparingInt((Film film) -> film.getLikes().size()).reversed())
                 .limit(count)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Collection<Film> getFilmsByDirector(long id, String query) {
+        return films.values();
+    }
+
+    @Override
+    public Collection<Film> searchFilms(String query, String searchBy) {
+        return films.values();
     }
 
     private long getNextId() {
@@ -89,5 +108,22 @@ public class InMemoryFilmStorage implements FilmStorage {
         if (film.getReleaseDate().isBefore(START_FILM_RELEASE_DATE)) {
             throw new ValidationException("Дата релиза не может быть раньше " + START_FILM_RELEASE_DATE);
         }
+    }
+
+    @Override
+    public void deleteFilm(long filmId) {
+        if (!films.containsKey(filmId)) {
+            throw new NotFoundException("Фильм с id = " + filmId + " не найден");
+        }
+        films.remove(filmId);
+    }
+
+    @Override
+    public Collection<Film> getCommonFilms(long userId, long friendId) {
+        return getAllFilms().stream()
+                .filter(film -> film.getLikes().stream().anyMatch(like -> like.getUserId() == userId))
+                .filter(film -> film.getLikes().stream().anyMatch(like -> like.getUserId() == friendId))
+                .sorted(Comparator.comparingInt((Film film) -> film.getLikes().size()).reversed())
+                .collect(Collectors.toList());
     }
 }

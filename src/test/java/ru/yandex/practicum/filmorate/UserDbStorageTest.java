@@ -50,7 +50,7 @@ class UserDbStorageTest {
         assertThat(userDb.getBirthday()).isEqualTo(LocalDate.of(1999, 1, 1));
         assertThat(userDb.getEmail()).isEqualTo("new@mail.com");
 
-        dbStorage.delUser(userDb.getId());
+        dbStorage.deleteUser(userDb.getId());
     }
 
     @Test

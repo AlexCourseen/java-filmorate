@@ -11,7 +11,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.yandex.practicum.filmorate.model.Friend;
+import ru.yandex.practicum.filmorate.model.Event;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
@@ -49,19 +50,41 @@ public class UserController {
     }
 
     @GetMapping("/{id}/friends")
-    public Collection<Friend> getFriends(@PathVariable long id) {
+    public Collection<User> getFriends(@PathVariable long id) {
         return service.getUserFriends(id);
     }
 
     @DeleteMapping("{id}/friends/{friendId}")
     public void delFriend(@PathVariable long id,
-                                @PathVariable long friendId) {
+                          @PathVariable long friendId) {
         service.delFriend(id, friendId);
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
-    public List<Friend> getCommonFriends(@PathVariable long id,
+    public List<User> getCommonFriends(@PathVariable long id,
                                        @PathVariable long otherId) {
         return service.commonFriends(id, otherId);
+    }
+
+    @GetMapping("/{id}/feed")
+    public Collection<Event> getEvents(@PathVariable long id) {
+        return service.getEvents(id);
+    }
+
+    @DeleteMapping("/{userId}")
+    public void deleteUser(@PathVariable long userId) {
+        log.info("Удаление пользователя с id={}", userId);
+        service.deleteUser(userId);
+    }
+
+    @GetMapping("/{userId}")
+    public User getUser(@PathVariable long userId) {
+        log.info("Получение пользователя с id={}", userId);
+        return service.getUser(userId);
+    }
+
+    @GetMapping("/{id}/recommendations")
+    public Collection<Film> getRecommendations(@PathVariable Long id) {
+        return service.getFilmRecommendation(id);
     }
 }
